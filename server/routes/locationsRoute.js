@@ -1,7 +1,7 @@
 import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import LocationsController from '../controllers/locations.js'
+import LocationsController from '../controllers/locationsController.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename)
 const router = express.Router()
 
 // Get all locations
-router.get('/', LocationsController.getLocations)
+router.get('/locations', LocationsController.getLocations)
 
 // Serve location page
 router.get('/:locationId', (req, res) => {

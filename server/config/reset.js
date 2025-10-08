@@ -1,95 +1,106 @@
-import { pool } from './database.js'
-import './dotenv.js'
-import eventData from '../data/data.js'
+import { pool } from './database.js';
+import dotenv from 'dotenv';
+import eventData from '../data/data.js';
 
-// Create both tables
-const createTables = async () => {
-  const createTablesQuery = `
-  DROP TABLE IF EXISTS events;
-  DROP TABLE IF EXISTS locations;
+dotenv.config({ path: '../.env' });
 
-  CREATE TABLE IF NOT EXISTS locations (
+const createLocationsTable = async () => {
+  const createTableQuery = `
+    DROP TABLE IF EXISTS locations CASCADE;
+    CREATE TABLE IF NOT EXISTS locations (
       id SERIAL PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
-      address VARCHAR(255),
-      description TEXT
-  );
+      address VARCHAR(255) NOT NULL
+    )`;
+  try {
+    await pool.query(createTableQuery);
+    console.log('🎉 locations table created successfully');
+  } catch (err) {
+    console.error('⚠️ error creating locations table', err);
+  }
+};
 
-  CREATE TABLE IF NOT EXISTS events (
+const createEventsTable = async () => {
+  const createTableQuery = `
+    DROP TABLE IF EXISTS events;
+    CREATE TABLE IF NOT EXISTS events (
       id SERIAL PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       location_id INTEGER REFERENCES locations(id),
       date TIMESTAMP NOT NULL,
       description TEXT NOT NULL,
       attendees INTEGER NOT NULL
-  );`
-
+    )`;
   try {
-    await pool.query(createTablesQuery)
-    console.log('🎉 locations and events tables created successfully')
+    await pool.query(createTableQuery);
+    console.log('🎉 events table created successfully');
   } catch (err) {
-    console.error('⚠️ error creating tables', err)
+    console.error('⚠️ error creating events table', err);
   }
-}
+};
 
-// Seed both tables
-const seedTables = async () => {
-  await createTables()
-
-  // Step 1: Define 3 locations
-  const locations = [
-    {
-      name: 'Maple Park',
-      address: '120 Oak Ave',
-      description: 'A family-friendly green space with concerts and markets.'
-    },
-    {
-      name: 'Downtown Arts District',
-      address: '45 Main St',
-      description: 'Creative hub full of galleries, murals, and coffee shops.'
-    },
-    {
-      name: 'Riverside Greenhouse',
-      address: '8 River Rd',
-      description: 'Community garden and sustainability center by the river.'
+const seedLocationsTable = async () => {
+  await createLocationsTable();
+  // Extract unique locations
+  const uniqueLocations = [];
+  const locationMap = new Map();
+  eventData.forEach((event, index) => {
+    if (!locationMap.has(event.location)) {
+      locationMap.set(event.location, {
+        id: index + 1,
+        name: event.location,
+        address: event.address
+      });
+      uniqueLocations.push({
+        id: index + 1,
+        name: event.location,
+        address: event.address
+      });
     }
-  ]
+  });
 
-  // Step 2: Insert locations and capture their IDs
-  const locationMap = {}
-
-  for (const loc of locations) {
+  for (const location of uniqueLocations) {
+    const insertQuery = {
+      text: 'INSERT INTO locations (id, name, address) VALUES ($1, $2, $3)',
+      values: [location.id, location.name, location.address],
+    };
     try {
-      const result = await pool.query(
-        'INSERT INTO locations (name, address, description) VALUES ($1, $2, $3) RETURNING id',
-        [loc.name, loc.address, loc.description]
-      )
-      const id = result.rows[0].id
-      locationMap[loc.name] = id
-      console.log(`📍 ${loc.name} added (id: ${id})`)
+      await pool.query(insertQuery);
+      console.log(`✅ ${location.name} added successfully`);
     } catch (err) {
-      console.error('⚠️ error inserting location', err)
+      console.error(`⚠️ error inserting location ${location.name}`, err);
     }
   }
+  return locationMap;
+};
 
-  // Step 3: Insert events with location_id instead of location name
+const seedEventsTable = async (locationMap) => {
+  await createEventsTable();
   for (const event of eventData) {
-    const locId = locationMap[event.location]
-    if (!locId) {
-      console.error(`⚠️ location not found for event: ${event.name}`)
-      continue
-    }
-
+    const locationId = locationMap.get(event.location).id;
+    const insertQuery = {
+      text: 'INSERT INTO events (id, name, location_id, date, description, attendees) VALUES ($1, $2, $3, $4, $5, $6)',
+      values: [
+        event.id,
+        event.name,
+        locationId,
+        event.date,
+        event.description,
+        event.attendees,
+      ],
+    };
     try {
-      await pool.query(
-        'INSERT INTO events (name, location_id, date, description, attendees) VALUES ($1, $2, $3, $4, $5)',
-        [event.name, locId, event.date, event.description, event.attendees]
-      )
-      console.log(`✅ ${event.name} added successfully`)
+      await pool.query(insertQuery);
+      console.log(`✅ ${event.name} added successfully`);
     } catch (err) {
-      console.error('⚠️ error inserting event', err)
+      console.error(`⚠️ error inserting event ${event.name}`, err);
     }
   }
-}
+};
 
-seedTables()
+const seedAllTables = async () => {
+  const locationMap = await seedLocationsTable();
+  await seedEventsTable(locationMap);
+};
+
+seedAllTables();

@@ -5,8 +5,8 @@ import dotenv from 'dotenv'
 import './config/dotenv.js'
 
 // import the routers
-import locationsRouter from './routes/locations.js'
-import eventsRouter from './routes/events.js'
+import locationsRouter from './routes/locationsRoute.js'
+import eventsRouter from './routes/eventsRoute.js'
 
 dotenv.config()
 
