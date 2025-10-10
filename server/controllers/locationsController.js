@@ -3,7 +3,7 @@ import { pool } from '../config/database.js';
 export const getLocations = async (req, res) => {
   try {
     const selectQuery = `
-      SELECT id, name, address
+      SELECT id, name, address, image
       FROM locations
       ORDER BY id ASC
     `;

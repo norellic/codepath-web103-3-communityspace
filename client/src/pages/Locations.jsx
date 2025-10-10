@@ -21,16 +21,28 @@ const Locations = () => {
     <div className='available-locations container'>
       <h1>Locations</h1>
       {locations.length > 0 ? (
-        <div className='grid'>
-          {locations.map((location) => (
-            <Link
-              key={location.id}
-              to={`/locations/${location.id}`}
-              role='button'
-              className='btn btn-primary'
-            >
-              {location.name}
-            </Link>
+            <div className='grid'>
+              {locations.map(location => (
+        <Link
+          key={location.id}
+          to={`/locations/${location.id}`}
+          role="button"
+          className="location-card"
+        >
+          <div className='location-button-content'>
+          <div>
+          <img
+            src={location.image}
+            alt={location.name}
+            className="location-card__image"
+          />
+          </div>
+          <div className="location-card__overlay">
+            <h3 className="location-card__name">{location.name}</h3>
+            <p className="location-card__address">{location.address}</p>
+          </div>
+          </div>
+        </Link>
           ))}
         </div>
       ) : (

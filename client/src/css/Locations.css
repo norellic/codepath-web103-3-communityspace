@@ -1,16 +1,41 @@
 .available-locations {
-    text-align: center;
-    padding: 2rem;
-  }
-  
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    padding: 1rem;
-  }
-  
-  .btn {
-    width: 100%;
-    padding: 0.75rem;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  width: 100%;
+}
+
+.location-card {
+  position: relative;
+  display: block;
+  width: 100%;            
+  max-width: 1100px;     
+  min-width: 300px;      
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.location-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.location-card__image {
+  width: 100
+}
+
+.location-button-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; 
+}
+
+#img {
+  object-fit: contain;
+}
