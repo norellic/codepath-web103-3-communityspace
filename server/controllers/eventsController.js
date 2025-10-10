@@ -1,6 +1,5 @@
 import { pool } from '../config/database.js';
 
-// GET all events
 export const getEvents = async (req, res) => {
   try {
     const results = await pool.query('SELECT * FROM events');
@@ -10,7 +9,6 @@ export const getEvents = async (req, res) => {
   }
 };
 
-// ✅ GET single event by ID
 export const getEventById = async (req, res) => {
   const { id } = req.params;
   try {

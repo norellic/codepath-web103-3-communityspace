@@ -1,40 +1,48 @@
-import React, { useState, useEffect } from 'react'
-import Event from '../components/Event'
-import '../css/LocationEvents.css'
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import Event from '../components/Event';
+import LocationsAPI from '../services/LocationsAPI';
+import '../css/LocationEvents.css';
+import EventsAPI from "../services/EventsAPI";
 
-const LocationEvents = ({index}) => {
-    const [location, setLocation] = useState([])
-    const [events, setEvents] = useState([])
-
+const LocationEvents = () => {
+    const [events, setEvents] = useState([]);
+    const { locationId } = useParams(); // e.g. /locations/2 → locationId = "2"
+    //console.log(locationId)
+  
+    useEffect(() => {
+      (async () => {
+        try {
+          const data = await EventsAPI.getEvents(); // fetch all events
+          console.log(data);
+  
+          // Filter by locationId (convert both sides to numbers for safety)
+          const filteredEvents = Array.isArray(data)
+            ? data.filter(event => Number(event.location_id) === Number(locationId))
+            : [];
+  
+          setEvents(filteredEvents);
+          console.log(events)
+        } catch (err) {
+          console.error("Failed to load events:", err);
+        }
+      })();
+    }, [locationId]); // re-run if locationId changes
+  
     return (
-        <div className='location-events'>
-            <header>
-                <div className='location-image'>
-                    <img src={location.image} />
-                </div>
-
-                {/* <div className='location-info'>
-                    <h2>{location.name}</h2>
-                    <p>{location.address}, {location.city}, {location.state} {location.zip}</p>
-                </div> */}
-            </header>
-
-            <main>
-                {
-                    events && events.length > 0 ? events.map((event, index) =>
-                        <Event
-                            key={event.id}
-                            id={event.id}
-                            title={event.title}
-                            date={event.date}
-                            time={event.time}
-                            image={event.image}
-                        />
-                    ) : <h2><i className="fa-regular fa-calendar-xmark fa-shake"></i> {'No events scheduled at this location yet!'}</h2>
-                }
-            </main>
+      <div>
+        <h2>Events for Location {locationId}</h2>
+        {events.length > 0 ? (
+          <div className="card-grid">
+          {events.map((ev) => (
+            <Event id={ev.id} event={ev} />
+          ))}
         </div>
-    )
-}
-
-export default LocationEvents
+        ) : (
+          <p>No events found for this location.</p>
+        )}
+      </div>
+    );
+  };
+  
+  export default LocationEvents;

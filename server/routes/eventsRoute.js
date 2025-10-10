@@ -7,11 +7,7 @@ const router = express.Router()
 
 //must import the route to the server, saying app use(for this endpoint, this router)
 
-// Get all events
 router.get('/events', getEvents)
 router.get('/events/:id', getEventById);
-
-// // Get events for a specific location
-//router.get('/location/:locationId', EventsController.getEventsByLocation)
 
 export default router
