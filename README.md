@@ -38,7 +38,7 @@ The following **additional** features are implemented:
 Here's a walkthrough of implemented required features:
 
 UPDATED:
-<img src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3BzaTRxeHNxZHBhNDB6ZmczdjkxajJyNmQ4OXM2YWFkcXl3bThiayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/fczguJo8Lz3LuZW4ew/giphy.gif'/>
+<img src='https://github.com/norellic/codepath-web103-3-communityspace/blob/main/gif%20(6).gif'/>
 
 RENDER DATABASE INCLUDED IN BEGINNING OF THIS VIDEO:
 <img src='https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExamFxN3VwYm12cHFrY3R6eGZ4Y3Q0Yno2eXZlY2JhZDE4OHoydjhkYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1coE3iD4UomMjzxQav/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
