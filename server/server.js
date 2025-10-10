@@ -3,15 +3,19 @@ import path from 'path'
 import favicon from 'serve-favicon'
 import dotenv from 'dotenv'
 import './config/dotenv.js'
+import cors from 'cors'
 
 // import the routers
 import locationsRouter from './routes/locationsRoute.js'
 import eventsRouter from './routes/eventsRoute.js'
 
+
+
 dotenv.config()
 
 const PORT = process.env.PORT || 3000
 const app = express()
+app.use(cors())
 
 app.use(express.json())
 
@@ -22,9 +26,13 @@ if (process.env.NODE_ENV === 'development') {
     app.use(express.static('public'))
 }
 
+
+
 // API routes
-app.use('/api/locations', locationsRouter)
-app.use('/api/events', eventsRouter)
+app.use('/api', locationsRouter)
+app.use('/api', eventsRouter)
+
+
 
 // Production route handling
 if (process.env.NODE_ENV === 'production') {

@@ -1,22 +1,17 @@
 import express from 'express'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import EventsController from '../controllers/eventsController.js'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+import { getEvents, getEventById } from '../controllers/eventsController.js'
 
 const router = express.Router()
 
+//route is getting your URL endpoint, and sending back a data package that that page will need(sometimes through the controller), otherwise just an html file
+
+//must import the route to the server, saying app use(for this endpoint, this router)
+
 // Get all events
-router.get('/', EventsController.getEvents)
+router.get('/events', getEvents)
+router.get('/events/:id', getEventById);
 
 // // Get events for a specific location
-// router.get('/location/:locationId', EventsController.getEventsByLocation)
-
-// Serve event page (optional)
-router.get('/:eventId', (req, res) => {
-    res.status(200).sendFile(path.resolve(__dirname, '../public/event.html'))
-})
+//router.get('/location/:locationId', EventsController.getEventsByLocation)
 
 export default router

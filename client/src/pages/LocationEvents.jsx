@@ -13,10 +13,10 @@ const LocationEvents = ({index}) => {
                     <img src={location.image} />
                 </div>
 
-                <div className='location-info'>
+                {/* <div className='location-info'>
                     <h2>{location.name}</h2>
                     <p>{location.address}, {location.city}, {location.state} {location.zip}</p>
-                </div>
+                </div> */}
             </header>
 
             <main>

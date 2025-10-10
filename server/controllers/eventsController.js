@@ -1,26 +1,27 @@
 import { pool } from '../config/database.js';
 
-const getEvents = async (req, res) => {
+// GET all events
+export const getEvents = async (req, res) => {
   try {
-    const locationId = req.query.locationId ? parseInt(req.query.locationId) : null;
-    let selectQuery = `
-      SELECT e.*, l.name AS location_name, l.address AS location_address
-      FROM events e
-      JOIN locations l ON e.location_id = l.id
-    `;
-    const values = [];
-    if (locationId) {
-      selectQuery += ` WHERE e.location_id = $1`;
-      values.push(locationId);
-    }
-    selectQuery += ` ORDER BY e.date ASC`;
-    const results = await pool.query(selectQuery, values);
-    res.status(200).json(results.rows);
+    const results = await pool.query('SELECT * FROM events');
+    res.json(results.rows);
   } catch (error) {
     res.status(409).json({ error: error.message });
   }
 };
 
-export default {
-  getEvents
+// ✅ GET single event by ID
+export const getEventById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM events WHERE id = $1', [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };

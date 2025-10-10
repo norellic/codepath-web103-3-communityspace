@@ -25,11 +25,12 @@ const createEventsTable = async () => {
     DROP TABLE IF EXISTS events;
     CREATE TABLE IF NOT EXISTS events (
       id SERIAL PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
+      title VARCHAR(255) NOT NULL,
       location_id INTEGER REFERENCES locations(id),
       date TIMESTAMP NOT NULL,
       description TEXT NOT NULL,
-      attendees INTEGER NOT NULL
+      attendees INTEGER NOT NULL,
+      image TEXT NOT NULL
     )`;
   try {
     await pool.query(createTableQuery);
@@ -41,6 +42,7 @@ const createEventsTable = async () => {
 
 const seedLocationsTable = async () => {
   await createLocationsTable();
+
   // Extract unique locations
   const uniqueLocations = [];
   const locationMap = new Map();
@@ -76,24 +78,29 @@ const seedLocationsTable = async () => {
 
 const seedEventsTable = async (locationMap) => {
   await createEventsTable();
+
   for (const event of eventData) {
     const locationId = locationMap.get(event.location).id;
     const insertQuery = {
-      text: 'INSERT INTO events (id, name, location_id, date, description, attendees) VALUES ($1, $2, $3, $4, $5, $6)',
+      text: `
+        INSERT INTO events (id, title, location_id, date, description, attendees, image)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `,
       values: [
         event.id,
-        event.name,
+        event.title,
         locationId,
         event.date,
         event.description,
         event.attendees,
+        event.image
       ],
     };
     try {
       await pool.query(insertQuery);
-      console.log(`✅ ${event.name} added successfully`);
+      console.log(`✅ ${event.title} added successfully`);
     } catch (err) {
-      console.error(`⚠️ error inserting event ${event.name}`, err);
+      console.error(`⚠️ error inserting event ${event.title}`, err);
     }
   }
 };
